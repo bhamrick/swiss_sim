@@ -25,6 +25,10 @@ instance Monoid Rankings where
     mempty = Rankings []
     Rankings r1 `mappend` Rankings r2 = Rankings (Map.toList $ Map.unionWith (+) (Map.fromList r1) (Map.fromList r2))
 
+-- Throws out all ranking tiers with more than 2 losses or with 0 players
+-- If you remove the `l <= 2` condition then the program still works, but there
+-- are signifcantly more possibilities so results for large tournaments take a long
+-- time to complete.
 simplify :: Rankings -> Rankings
 simplify (Rankings r) = Rankings (filter (\(WinLoss w l, n) -> l <= 2 && n > 0) r)
 
@@ -101,4 +105,14 @@ pprintDist dist = do
 
 main :: IO ()
 main = do
-    pprintDist $ simulate 226 8 8
+    pprintDist $ simulate 227 8 16
+    putStrLn "---"
+    pprintDist $ simulate 256 8 16
+    putStrLn "---"
+    pprintDist $ simulate 257 9 16
+    putStrLn "---"
+    pprintDist $ simulate 409 9 16
+    putStrLn "---"
+    pprintDist $ simulate 410 9 32
+    putStrLn "---"
+    pprintDist $ simulate 512 9 32
